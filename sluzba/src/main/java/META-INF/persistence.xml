@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="sluzba" transaction-type="RESOURCE_LOCAL">
+		<class>com.studentska.sluzba.model.Dokument</class>
+		<class>com.studentska.sluzba.model.Ispit</class>
+		<class>com.studentska.sluzba.model.Korisnik</class>
+		<class>com.studentska.sluzba.model.Nastavnik</class>
+		<class>com.studentska.sluzba.model.NastavnikPredaje</class>
+		<class>com.studentska.sluzba.model.Predmet</class>
+		<class>com.studentska.sluzba.model.PredmetNaSmeru</class>
+		<class>com.studentska.sluzba.model.Rok</class>
+		<class>com.studentska.sluzba.model.Smer</class>
+		<class>com.studentska.sluzba.model.Student</class>
+		<class>com.studentska.sluzba.model.TipIspita</class>
+		<class>com.studentska.sluzba.model.Uloga</class>
+		<class>com.studentska.sluzba.model.UlogaNastavnik</class>
+		<class>com.studentska.sluzba.model.Uplata</class>
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ssluzba_db"/>
+			<property name="javax.persistence.jdbc.user" value="root"/>
+			<property name="javax.persistence.jdbc.password" value="root"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+		</properties>
+	</persistence-unit>
+</persistence>
