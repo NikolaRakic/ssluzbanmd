@@ -54,7 +54,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 	@Autowired
 	SmerRepository smerRepository;
 
-	@Transactional
+	@Transactional // omogucuje rollback u bazi pri pucanju
 	@Override
 	public String kreirajIliIzmeni(KreirajKorisnikaRequestDTO request) throws Exception {
 		// TODO Auto-generated method stub
