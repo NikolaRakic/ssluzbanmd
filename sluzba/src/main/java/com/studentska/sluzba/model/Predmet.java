@@ -19,7 +19,7 @@ public class Predmet implements Serializable {
 	@Column(name="id_predmet")
 	private int idPredmet;
 
-	private int naziv;
+	private String naziv;
 
 	//bi-directional many-to-one association to Ispit
 	@OneToMany(mappedBy="predmet")
@@ -44,12 +44,12 @@ public class Predmet implements Serializable {
 		this.idPredmet = idPredmet;
 	}
 
-	public int getNaziv() {
+	public String getNaziv() {
 		return this.naziv;
 	}
 
-	public void setNaziv(int naziv) {
-		this.naziv = naziv;
+	public void setNaziv(String string) {
+		this.naziv = string;
 	}
 
 	public List<Ispit> getIspits() {

@@ -5,5 +5,6 @@ import com.studentska.sluzba.dto.request.KreirajKorisnikaRequestDTO;
 public interface KorisnikService {
 
 	String kreirajIliIzmeni(KreirajKorisnikaRequestDTO request) throws Exception;
-
+	
+	void izbrisi(int idKorisnika) throws Exception;
 }

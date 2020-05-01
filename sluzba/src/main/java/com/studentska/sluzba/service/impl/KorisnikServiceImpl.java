@@ -123,4 +123,15 @@ public class KorisnikServiceImpl implements KorisnikService {
 		return "Uspesno";
 	}
 
+	@Override
+	public void izbrisi(int idKorisnika) throws Exception {
+		Optional<Korisnik> k = korisnikRepository.findById(idKorisnika);
+		if (!k.isPresent()) {
+			throw new Exception("Korisnik ne postojit");
+		}
+		Korisnik kor = k.get();
+		korisnikRepository.delete(kor);
+		
+	}
+
 }
