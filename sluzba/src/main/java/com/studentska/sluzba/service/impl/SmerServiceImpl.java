@@ -1,5 +1,6 @@
 package com.studentska.sluzba.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -7,7 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.studentska.sluzba.dto.request.KreirajSmerRequestDTO;
+import com.studentska.sluzba.dto.request.SmerDTO;
 import com.studentska.sluzba.model.Korisnik;
 import com.studentska.sluzba.model.Smer;
 import com.studentska.sluzba.repository.SmerRepository;
@@ -23,7 +24,7 @@ public class SmerServiceImpl implements SmerService{
 	
 	@Transactional // omogucuje rollback u bazi pri pucanju
 	@Override
-	public String kreirajIliIzmeni(KreirajSmerRequestDTO request) throws Exception {
+	public String kreirajIliIzmeni(SmerDTO request) throws Exception {
 		Smer smer = new Smer();
 		
 		
@@ -47,6 +48,25 @@ public class SmerServiceImpl implements SmerService{
 		smerRepository.saveAndFlush(smer);
 		
 		return "USPESNO!";
+	}
+
+
+	@Override
+	public void izbrisi(int idSmer) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public Smer findOne(int id) {
+		return smerRepository.findByidSmer(id);
+	}
+
+
+	@Override
+	public List<Smer> findAll() {
+		return smerRepository.findAll();
 	}
 
 }

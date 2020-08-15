@@ -1,17 +1,24 @@
 package com.studentska.sluzba.dto.request;
 
-public class KreirajSmerRequestDTO {
+import com.studentska.sluzba.model.Smer;
+
+public class SmerDTO {
 	
 	private int id;
 	private String naziv;
 	private int trajanje;
 	
 	
-	public KreirajSmerRequestDTO(int id, String naziv, int trajanje) {
+	public SmerDTO(int id, String naziv, int trajanje) {
 		super();
 		this.id = id;
 		this.naziv = naziv;
 		this.trajanje = trajanje;
+	}
+
+
+	public SmerDTO(Smer smer) {
+		this(smer.getIdSmer(), smer.getNaziv(), smer.getTrajanje());
 	}
 
 

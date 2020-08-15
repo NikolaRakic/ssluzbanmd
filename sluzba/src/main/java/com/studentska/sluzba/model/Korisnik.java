@@ -28,6 +28,8 @@ public class Korisnik implements Serializable {
 	private String pass;
 
 	private String prezime;
+	
+	private boolean obrisan;
 
 	@Temporal(TemporalType.DATE)
 	private Date rodjendan;
@@ -95,6 +97,14 @@ public class Korisnik implements Serializable {
 
 	public void setPrezime(String prezime) {
 		this.prezime = prezime;
+	}
+	
+	public boolean isObrisan() {
+		return this.obrisan;
+	}
+	
+	public void setObrisan(boolean obrisan) {
+		this.obrisan = obrisan;
 	}
 
 	public Date getRodjendan() {

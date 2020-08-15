@@ -21,6 +21,8 @@ public class PredmetNaSmeru implements Serializable {
 
 	@Column(name="godina_pojavljivanja")
 	private int godinaPojavljivanja;
+	
+	private boolean obrisan;
 
 	//bi-directional many-to-one association to Predmet
 	@ManyToOne
@@ -47,6 +49,14 @@ public class PredmetNaSmeru implements Serializable {
 
 	public void setGodinaPojavljivanja(int godinaPojavljivanja) {
 		this.godinaPojavljivanja = godinaPojavljivanja;
+	}
+	
+	public boolean isObrisan() {
+		return this.obrisan;
+	}
+	
+	public void setObrisan(boolean obrisan) {
+		this.obrisan = obrisan;
 	}
 
 	public Predmet getPredmet() {

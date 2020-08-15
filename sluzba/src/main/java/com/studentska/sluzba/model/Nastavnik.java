@@ -18,6 +18,8 @@ public class Nastavnik implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id_nastavnik")
 	private int idNastavnik;
+	
+	private boolean obrisan;
 
 	//bi-directional many-to-one association to Korisnik
 	@OneToMany(mappedBy="nastavnik")
@@ -42,6 +44,15 @@ public class Nastavnik implements Serializable {
 	public void setIdNastavnik(int idNastavnik) {
 		this.idNastavnik = idNastavnik;
 	}
+	
+	public boolean isObrisan() {
+		return this.obrisan;
+	}
+	
+	public void setObrisan(boolean obrisan) {
+		this.obrisan = obrisan;
+	}
+	
 
 	public List<Korisnik> getKorisniks() {
 		return this.korisniks;
