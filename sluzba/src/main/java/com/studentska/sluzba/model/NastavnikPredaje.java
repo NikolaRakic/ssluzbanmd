@@ -18,8 +18,6 @@ public class NastavnikPredaje implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id_nastavnik_predaje")
 	private int idNastavnikPredaje;
-	
-	private boolean obrisan;
 
 	//bi-directional many-to-one association to Nastavnik
 	@ManyToOne
@@ -47,16 +45,6 @@ public class NastavnikPredaje implements Serializable {
 	public void setNastavnik(Nastavnik nastavnik) {
 		this.nastavnik = nastavnik;
 	}
-	
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
-	}
-	
 
 	public Predmet getPredmet() {
 		return this.predmet;

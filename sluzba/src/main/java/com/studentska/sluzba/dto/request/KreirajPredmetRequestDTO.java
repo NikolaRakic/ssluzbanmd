@@ -1,24 +1,17 @@
 package com.studentska.sluzba.dto.request;
 
-import com.studentska.sluzba.model.Predmet;
-
-public class PredmetDTO {
+public class KreirajPredmetRequestDTO {
 	private int idPredmet;
 	private String naziv;
 	
 	
-	public PredmetDTO(int idPredmet, String naziv) {
+	public KreirajPredmetRequestDTO(int idPredmet, String naziv) {
 		super();
 		this.idPredmet = idPredmet;
 		this.naziv = naziv;
 	}
 	
 	
-	public PredmetDTO(Predmet predmet) {
-		this(predmet.getIdPredmet(), predmet.getNaziv());
-	}
-
-
 	public int getIdPredmet() {
 		return idPredmet;
 	}

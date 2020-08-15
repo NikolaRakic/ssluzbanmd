@@ -22,8 +22,6 @@ public class Smer implements Serializable {
 	private String naziv;
 
 	private int trajanje;
-	
-	private boolean obrisan;
 
 	//bi-directional many-to-one association to PredmetNaSmeru
 	@OneToMany(mappedBy="smer")
@@ -58,14 +56,6 @@ public class Smer implements Serializable {
 
 	public void setTrajanje(int trajanje) {
 		this.trajanje = trajanje;
-	}
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
 	}
 
 	public List<PredmetNaSmeru> getPredmetNaSmerus() {

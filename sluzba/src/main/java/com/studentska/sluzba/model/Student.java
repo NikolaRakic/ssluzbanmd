@@ -24,8 +24,6 @@ public class Student implements Serializable {
 
 	@Column(name="godina_studija")
 	private int godinaStudija;
-	
-	private boolean obrisan;
 
 	//bi-directional many-to-one association to Dokument
 	@OneToMany(mappedBy="student")
@@ -72,14 +70,6 @@ public class Student implements Serializable {
 
 	public void setGodinaStudija(int godinaStudija) {
 		this.godinaStudija = godinaStudija;
-	}
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
 	}
 
 	public List<Dokument> getDokuments() {

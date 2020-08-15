@@ -10,8 +10,7 @@ PRIMARY KEY(id_tip_ispita));
 
 CREATE TABLE predmet (
   id_predmet INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  naziv VARCHAR(255) NOT NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
+  naziv INTEGER UNSIGNED  NULL    ,
 PRIMARY KEY(id_predmet));
 
 
@@ -20,7 +19,6 @@ CREATE TABLE smer (
   id_smer INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   naziv VARCHAR(255)  NULL  ,
   trajanje INTEGER UNSIGNED  NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_smer));
 
 
@@ -51,7 +49,6 @@ CREATE TABLE student (
   smer_id_smer INTEGER UNSIGNED  NOT NULL  ,
   broj_indeksa VARCHAR(255)  NULL  ,
   godina_studija INTEGER UNSIGNED  NULL    ,
-   obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_student)  ,
 INDEX student_FKIndex1(smer_id_smer),
   FOREIGN KEY(smer_id_smer)
@@ -64,7 +61,6 @@ INDEX student_FKIndex1(smer_id_smer),
 CREATE TABLE nastavnik (
   id_nastavnik INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   uloga_nastavnik_id_uloga_nastavnik INTEGER UNSIGNED  NOT NULL    ,
-   obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_nastavnik)  ,
 INDEX nastavnik_FKIndex1(uloga_nastavnik_id_uloga_nastavnik),
   FOREIGN KEY(uloga_nastavnik_id_uloga_nastavnik)
@@ -92,7 +88,6 @@ CREATE TABLE nastavnik_predaje (
   id_nastavnik_predaje INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   predmet_id_predmet INTEGER UNSIGNED  NOT NULL  ,
   nastavnik_id_nastavnik INTEGER UNSIGNED  NOT NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_nastavnik_predaje)  ,
 INDEX nastavnik_predaje_FKIndex1(nastavnik_id_nastavnik)  ,
 INDEX nastavnik_predaje_FKIndex2(predmet_id_predmet),
@@ -112,7 +107,6 @@ CREATE TABLE predmet_na_smeru (
   predmet_id_predmet INTEGER UNSIGNED  NOT NULL  ,
   smer_id_smer INTEGER UNSIGNED  NOT NULL  ,
   godina_pojavljivanja INTEGER UNSIGNED  NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_predmet_na_smeru)  ,
 INDEX predmet_na_smeru_FKIndex1(smer_id_smer)  ,
 INDEX predmet_na_smeru_FKIndex2(predmet_id_predmet),
@@ -129,8 +123,8 @@ INDEX predmet_na_smeru_FKIndex2(predmet_id_predmet),
 
 CREATE TABLE korisnik (
   id_korisnik INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  student_id_student INTEGER UNSIGNED ,
-  nastavnik_id_nastavnik INTEGER UNSIGNED  ,
+  student_id_student INTEGER UNSIGNED  NOT NULL  ,
+  nastavnik_id_nastavnik INTEGER UNSIGNED  NOT NULL  ,
   uloga_id_uloga INTEGER UNSIGNED  NOT NULL  ,
   username VARCHAR(255)  NULL  ,
   pass VARCHAR(255)  NULL  ,
@@ -139,8 +133,7 @@ CREATE TABLE korisnik (
   adresa VARCHAR(255)  NULL  ,
   ime VARCHAR(255)  NULL  ,
   prezime VARCHAR(255)  NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
-  PRIMARY KEY(id_korisnik)  ,
+PRIMARY KEY(id_korisnik)  ,
 INDEX korisnik_FKIndex1(uloga_id_uloga)  ,
 INDEX korisnik_FKIndex2(nastavnik_id_nastavnik)  ,
 INDEX korisnik_FKIndex3(student_id_student),
@@ -168,7 +161,6 @@ CREATE TABLE ispit (
   datum DATE  NULL  ,
   ocena INTEGER UNSIGNED  NULL  ,
   bodovi INTEGER UNSIGNED  NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_ispit)  ,
 INDEX ispit_FKIndex1(tip_ispita_id_tip_ispita)  ,
 INDEX ispit_FKIndex2(rok_id_rok)  ,
@@ -198,15 +190,12 @@ CREATE TABLE dokument (
   student_id_student INTEGER UNSIGNED  NOT NULL  ,
   naziv VARCHAR(255)  NULL  ,
   file_2 BLOB  NULL    ,
-  obrisan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_dokument)  ,
 INDEX dokument_FKIndex1(student_id_student),
   FOREIGN KEY(student_id_student)
     REFERENCES student(id_student)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
-
-
 
 
 

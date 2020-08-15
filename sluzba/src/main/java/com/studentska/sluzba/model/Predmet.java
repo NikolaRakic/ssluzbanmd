@@ -20,8 +20,6 @@ public class Predmet implements Serializable {
 	private int idPredmet;
 
 	private String naziv;
-	
-	private boolean obrisan;
 
 	//bi-directional many-to-one association to Ispit
 	@OneToMany(mappedBy="predmet")
@@ -52,14 +50,6 @@ public class Predmet implements Serializable {
 
 	public void setNaziv(String string) {
 		this.naziv = string;
-	}
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
 	}
 
 	public List<Ispit> getIspits() {

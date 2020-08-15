@@ -2,7 +2,7 @@ package com.studentska.sluzba.dto.request;
 
 import java.util.Date;
 
-public class KorisnikDTO {
+public class KreirajKorisnikaRequestDTO {
 	private int idKorisnik;
 	private String adresa;
 	private String email;
@@ -17,7 +17,7 @@ public class KorisnikDTO {
 	private String ulogaNastavnik;
 	private String smerStudenta;
 	
-	public KorisnikDTO(int idKorisnik, String adresa, String email, String ime, String pass,
+	public KreirajKorisnikaRequestDTO(int idKorisnik, String adresa, String email, String ime, String pass,
 			String prezime, String rodjendan, String username, String uloga, String brojIndeksa, int godinaStudija, String ulogaNastavnik, String smerStudenta) {
 		super();
 		this.idKorisnik = idKorisnik;

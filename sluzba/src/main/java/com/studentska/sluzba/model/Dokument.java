@@ -23,8 +23,6 @@ public class Dokument implements Serializable {
 	private byte[] file2;
 
 	private String naziv;
-	
-	private boolean obrisan;
 
 	//bi-directional many-to-one association to Student
 	@ManyToOne
@@ -55,14 +53,6 @@ public class Dokument implements Serializable {
 
 	public void setNaziv(String naziv) {
 		this.naziv = naziv;
-	}
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
 	}
 
 	public Student getStudent() {

@@ -7,6 +7,4 @@ import com.studentska.sluzba.model.Predmet;
 
 	@Repository
 	public interface PredmetRepository extends JpaRepository<Predmet, Integer>{
-		Predmet findByIdPredmet(int id);
-		
 }

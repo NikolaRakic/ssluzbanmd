@@ -20,8 +20,6 @@ public class Ispit implements Serializable {
 	private int idIspit;
 
 	private int bodovi;
-	
-	private boolean obrisan;
 
 	@Temporal(TemporalType.DATE)
 	private Date datum;
@@ -62,14 +60,6 @@ public class Ispit implements Serializable {
 
 	public void setBodovi(int bodovi) {
 		this.bodovi = bodovi;
-	}
-	
-	public boolean isObrisan() {
-		return this.obrisan;
-	}
-	
-	public void setObrisan(boolean obrisan) {
-		this.obrisan = obrisan;
 	}
 
 	public Date getDatum() {
