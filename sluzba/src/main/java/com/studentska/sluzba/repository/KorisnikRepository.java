@@ -7,5 +7,5 @@ import com.studentska.sluzba.model.Korisnik;
 
 @Repository
 public interface KorisnikRepository extends JpaRepository<Korisnik, Integer> {
-
+	Korisnik findByUsernameOrEmail(String username,String email);
 }

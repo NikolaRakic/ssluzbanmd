@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.studentska.sluzba.dto.request.KreirajKorisnikaRequestDTO;
+import com.studentska.sluzba.dto.request.KorisnikDTO;
 import com.studentska.sluzba.model.Korisnik;
 import com.studentska.sluzba.model.Nastavnik;
 import com.studentska.sluzba.model.Smer;
@@ -22,6 +22,8 @@ import com.studentska.sluzba.repository.SmerRepository;
 import com.studentska.sluzba.repository.StudentRepository;
 import com.studentska.sluzba.repository.UlogaNastavnikRepository;
 import com.studentska.sluzba.repository.UlogaRepository;
+import com.studentska.sluzba.security.SecurityConfiguration;
+import com.studentska.sluzba.security.TokenUtils;
 import com.studentska.sluzba.service.KorisnikService;
 import com.studentska.sluzba.util.Constants;
 
@@ -53,10 +55,16 @@ public class KorisnikServiceImpl implements KorisnikService {
 
 	@Autowired
 	SmerRepository smerRepository;
+	
+	@Autowired
+	SecurityConfiguration configuration;
+	
+	@Autowired
+	TokenUtils tokenUtils;
 
 	@Transactional // omogucuje rollback u bazi pri pucanju
 	@Override
-	public String kreirajIliIzmeni(KreirajKorisnikaRequestDTO request) throws Exception {
+	public String kreirajIliIzmeni(KorisnikDTO request) throws Exception {
 		// TODO Auto-generated method stub
 		Korisnik korisnik = new Korisnik();
 		String prosledjenaUloga = request.getUloga();
@@ -110,7 +118,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 		korisnik.setAdresa(request.getAdresa());
 		korisnik.setEmail(request.getEmail());
 		korisnik.setIme(request.getIme());
-		korisnik.setPass(request.getPass());
+		korisnik.setPass(configuration.passwordEncoder().encode(request.getPass()));
 		korisnik.setPrezime(request.getPrezime());
 		String datumStr = request.getRodjendan();
 		// "31/12/1998"; <- koristite ovaj format u celoj aplikaciji
@@ -132,6 +140,12 @@ public class KorisnikServiceImpl implements KorisnikService {
 		Korisnik kor = k.get();
 		korisnikRepository.delete(kor);
 		
+	}
+
+	@Override
+	public Korisnik findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return korisnikRepository.findByUsernameOrEmail(username, username);
 	}
 
 }

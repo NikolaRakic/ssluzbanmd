@@ -1,5 +1,7 @@
 package com.studentska.sluzba.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -7,10 +9,15 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.studentska.sluzba.dto.request.KreirajPredmetRequestDTO;
+import com.studentska.sluzba.dto.request.DodeliPredmetSmeruRequestDTO;
+import com.studentska.sluzba.dto.request.PredmetDTO;
+import com.studentska.sluzba.dto.response.PredmetNaSmeruResponseDTO;
 import com.studentska.sluzba.model.Predmet;
+import com.studentska.sluzba.model.PredmetNaSmeru;
 import com.studentska.sluzba.model.Smer;
+import com.studentska.sluzba.repository.PredmetNaSmeruRepository;
 import com.studentska.sluzba.repository.PredmetRepository;
+import com.studentska.sluzba.repository.SmerRepository;
 import com.studentska.sluzba.service.PredmetService;
 
 @Service
@@ -19,9 +26,15 @@ public class PredmetServiceImpl implements PredmetService{
 	@Autowired
 	PredmetRepository predmetRepository;
 	
+	@Autowired
+	PredmetNaSmeruRepository predmetNaSmeruRepository;
+	
+	@Autowired
+	SmerRepository smerRepository;
+	
 	@Transactional
 	@Override
-	public String kreirajIliIzmeni(KreirajPredmetRequestDTO request) throws Exception {
+	public String kreirajIliIzmeni(PredmetDTO request) throws Exception {
 	
 		Predmet predmet = new Predmet ();
 	
@@ -43,6 +56,66 @@ public class PredmetServiceImpl implements PredmetService{
 		predmetRepository.saveAndFlush(predmet);
 		
 		return "USPESNO!";
+	}
+
+	@Override
+	public Predmet findOne(int id) {
+		return predmetRepository.findByIdPredmet(id);
+	}
+
+	@Override
+	public List<Predmet> findAll() {
+		return predmetRepository.findAll();
+	}
+
+	@Override
+	public List<PredmetNaSmeruResponseDTO> getPredmetiPoSmeru(int idSmera) throws Exception{
+		// TODO Auto-generated method stub
+		Optional<Smer> smerOptional = smerRepository.findById(idSmera);
+		if(!smerOptional.isPresent()) {
+			throw new Exception("Prosledjen je pogresan id smera");
+		}
+		Smer smer = smerOptional.get();
+		List<PredmetNaSmeru> predmetiNaSmerovima = predmetNaSmeruRepository.findAllBySmer(smer);
+		List<PredmetNaSmeruResponseDTO> response = new ArrayList<PredmetNaSmeruResponseDTO>();
+		for(PredmetNaSmeru pns:predmetiNaSmerovima) {
+			PredmetNaSmeruResponseDTO tmpObj = new PredmetNaSmeruResponseDTO(pns.getIdPredmetNaSmeru(), pns.getGodinaPojavljivanja(), pns.isObrisan(), pns.getPredmet().getIdPredmet(), pns.getPredmet().getNaziv(), pns.getPredmet().isObrisan(), pns.getSmer().getIdSmer(), pns.getSmer().getNaziv(), pns.getSmer().getTrajanje(), pns.getSmer().isObrisan());
+			response.add(tmpObj);
+		}
+		return response;
+	}
+
+	@Override
+	public String dodeliPredmetSmeru(DodeliPredmetSmeruRequestDTO request) throws Exception {
+		Optional<Smer> smerOptional = smerRepository.findById(request.getIdSmer());
+		if(!smerOptional.isPresent()) {
+			throw new Exception("Prosledjen je pogresan id smera");
+		}
+		Smer smer = smerOptional.get();
+		
+		Optional<Predmet> predmetOptional = predmetRepository.findById(request.getIdPredmet());
+		if(!predmetOptional.isPresent()) {
+			throw new Exception("Prosledjen je pogresan id predmeta");
+		}
+		Predmet predmet = predmetOptional.get();
+		int godinaPojavljivanja = request.getGodinaPojavljivanja();
+		if(godinaPojavljivanja<1 || godinaPojavljivanja>4) {
+			throw new Exception("Godina pojavljivanja mora biti od 1 do 4");
+		}
+		
+		PredmetNaSmeru proveraPostoanja = predmetNaSmeruRepository.findBySmerAndPredmetAndGodinaPojavljivanjaAndObrisan(smer, predmet, godinaPojavljivanja, false);
+		if(proveraPostoanja!=null) {
+			throw new Exception("Izabrani predmet je vec dodeljen izabranom smeru za izabranu godinu pojavljivanja");
+		}
+		PredmetNaSmeru novPredmet = new PredmetNaSmeru();
+		novPredmet.setGodinaPojavljivanja(godinaPojavljivanja);
+		novPredmet.setObrisan(false);
+		novPredmet.setPredmet(predmet);
+		novPredmet.setSmer(smer);
+		
+		predmetNaSmeruRepository.save(novPredmet);
+		
+		return "Predmet je uspesno dodeljen izabranom smeru";
 	}
 	
 	
