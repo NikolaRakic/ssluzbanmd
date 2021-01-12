@@ -26,7 +26,7 @@ public class Ispit implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date datum;
 
-	private int ocena;
+	private Integer ocena;
 
 	//bi-directional many-to-one association to Predmet
 	@ManyToOne
@@ -80,11 +80,11 @@ public class Ispit implements Serializable {
 		this.datum = datum;
 	}
 
-	public int getOcena() {
+	public Integer getOcena() {
 		return this.ocena;
 	}
 
-	public void setOcena(int ocena) {
+	public void setOcena(Integer ocena) {
 		this.ocena = ocena;
 	}
 

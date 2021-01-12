@@ -5,9 +5,12 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,6 +47,7 @@ public class SmerController {
 	
 	@GetMapping("/getSmer/{id}")
 	public ResponseEntity<SmerDTO> getSmer(@PathVariable int id){
+		System.out.println("usao");
 		Smer smer = smerService.findOne(id);
 		if(smer == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -53,6 +57,7 @@ public class SmerController {
 	
 	
 	@GetMapping()
+	@PreAuthorize("hasAuthority('admin')")
 	public ResponseEntity<List<SmerDTO>> getSmerovi(){
 		List<Smer> smerovi = smerService.findAll();
 		//convert smerovi to DTOs
@@ -61,6 +66,15 @@ public class SmerController {
 			smeroviDTO.add(new SmerDTO(s));
 		}
 		return new ResponseEntity<>(smeroviDTO, HttpStatus.OK);
+	}
+	
+	@PutMapping("/obrisi/{id}")
+	public ResponseEntity<String> obrisi(@PathVariable int id){
+		try {
+			return new ResponseEntity<String>(smerService.izbrisi(id),HttpStatus.OK);
+		}catch (Exception ex) {
+			return new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 

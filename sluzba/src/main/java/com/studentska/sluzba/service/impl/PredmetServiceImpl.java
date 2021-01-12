@@ -57,6 +57,8 @@ public class PredmetServiceImpl implements PredmetService{
 		
 		return "USPESNO!";
 	}
+	
+	
 
 	@Override
 	public Predmet findOne(int id) {
@@ -116,6 +118,19 @@ public class PredmetServiceImpl implements PredmetService{
 		predmetNaSmeruRepository.save(novPredmet);
 		
 		return "Predmet je uspesno dodeljen izabranom smeru";
+	}
+
+	@Override
+	public String izbrisi(int id) {
+		Optional<Predmet> predmetOptional = predmetRepository.findById(id);
+		
+		Predmet predmet = predmetOptional.get();
+		
+		predmet.setObrisan(true);
+		
+		predmetRepository.saveAndFlush(predmet);
+		
+		return null;
 	}
 	
 	

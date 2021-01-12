@@ -3,11 +3,11 @@ package com.studentska.sluzba.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.studentska.sluzba.model.TipIspita;
+import com.studentska.sluzba.model.Rok;
 
 @Repository
-public interface TipIspitaRepository extends JpaRepository<TipIspita, Integer>{
+public interface RokRepository extends JpaRepository<Rok, Integer>{
 	
-	TipIspita findByIdTipIspita(int id);
+	Rok findByIdRok(int id);
 
 }

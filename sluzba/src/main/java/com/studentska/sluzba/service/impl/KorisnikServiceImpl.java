@@ -1,7 +1,9 @@
 package com.studentska.sluzba.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -10,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studentska.sluzba.dto.request.KorisnikDTO;
+import com.studentska.sluzba.dto.request.StudentDTO;
+import com.studentska.sluzba.dto.response.ProfesoriDTO;
+import com.studentska.sluzba.dto.response.StudentiDTO;
 import com.studentska.sluzba.model.Korisnik;
 import com.studentska.sluzba.model.Nastavnik;
 import com.studentska.sluzba.model.Smer;
@@ -91,6 +96,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 				student = korisnik.getStudent();
 			}
 			Smer smer = smerRepository.findByNaziv(request.getSmerStudenta());
+			System.out.println("AAAAAAAAAAA" + smer);
 			if (smer == null) {
 				throw new Exception("Nepostojeci smer");
 			}
@@ -122,7 +128,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 		korisnik.setPrezime(request.getPrezime());
 		String datumStr = request.getRodjendan();
 		// "31/12/1998"; <- koristite ovaj format u celoj aplikaciji
-		Date rodjendan = new SimpleDateFormat(Constants.DATE_FORMAT).parse(datumStr);
+		Date rodjendan = new SimpleDateFormat(Constants.DATE_FORMAT).parse(datumStr.substring(0,10));
 		korisnik.setRodjendan(rodjendan);
 		korisnik.setUsername(request.getUsername());
 
@@ -132,13 +138,23 @@ public class KorisnikServiceImpl implements KorisnikService {
 	}
 
 	@Override
-	public void izbrisi(int idKorisnika) throws Exception {
+	public String izbrisi(int idKorisnika) throws Exception {
 		Optional<Korisnik> k = korisnikRepository.findById(idKorisnika);
 		if (!k.isPresent()) {
 			throw new Exception("Korisnik ne postojit");
 		}
 		Korisnik kor = k.get();
-		korisnikRepository.delete(kor);
+		Student student = kor.getStudent();
+		if(!(student == null)) {
+			korisnikRepository.delete(kor);
+			studentRepository.delete(student);
+		}
+		else {
+			korisnikRepository.delete(kor);
+		}
+		
+		
+		return "Uspesno";
 		
 	}
 
@@ -146,6 +162,52 @@ public class KorisnikServiceImpl implements KorisnikService {
 	public Korisnik findByUsername(String username) {
 		// TODO Auto-generated method stub
 		return korisnikRepository.findByUsernameOrEmail(username, username);
+	}
+
+	@Override
+	public List<Korisnik> findAll() {
+		return korisnikRepository.findAll();
+	}
+
+	@Override
+	public List<StudentiDTO> sviStudenti() throws Exception {
+		List<Korisnik> studenti = korisnikRepository.findByStudentNotNullAndObrisanFalse();
+		List<StudentiDTO> studentiDTO = new ArrayList<StudentiDTO>();
+		for (Korisnik s : studenti) {
+			studentiDTO.add(new StudentiDTO(s.getIdKorisnik(), s.getUsername(), s.getEmail(), s.getIme(), s.getPrezime(), s.getStudent().getIdStudent(), s.getStudent().getBrojIndeksa(), s.getStudent().getSmer().getNaziv()));
+		}
+		
+		return studentiDTO;
+	}
+
+	@Override
+	public List<ProfesoriDTO> sviProfesori() throws Exception {
+		List<Korisnik> profesori = korisnikRepository.findByNastavnikNotNull();
+		List<ProfesoriDTO> profesoriDTO = new ArrayList<ProfesoriDTO>();
+		for (Korisnik p : profesori) {
+			profesoriDTO.add(new ProfesoriDTO(p.getIdKorisnik(), p.getNastavnik().getIdNastavnik(), p.getIme(), p.getPrezime(), p.getEmail(), p.getNastavnik().getUlogaNastavnik().getNaziv()));
+		}
+		
+		return profesoriDTO;
+	}
+
+	@Override
+	public StudentDTO findOneStudent(int id) throws Exception {
+		Optional<Korisnik> korisnikOptional = korisnikRepository.findById(id);
+		
+		if(!korisnikOptional.isPresent()) {
+			throw new Exception("Korisnik sa prosledjenim id-om ne postoji");
+		}
+		Korisnik korisnik = korisnikOptional.get();
+		
+		Optional<Student> studentOptional = studentRepository.findById(korisnik.getStudent().getIdStudent());
+		if(!studentOptional.isPresent()) {
+			throw new Exception("Student sa prosledjenim id-om ne postoji");
+		}
+		Student student = studentOptional.get();
+		StudentDTO studentDTO = new StudentDTO(korisnik.getIdKorisnik(), korisnik.getAdresa(), korisnik.getEmail(), korisnik.getIme(), korisnik.getPass(), korisnik.getPrezime(), korisnik.getRodjendan().toString(), korisnik.getUsername(), korisnik.getUloga().getNaziv(), student.getBrojIndeksa(), student.getGodinaStudija(), student.getSmer().getNaziv());
+		return studentDTO;
+	
 	}
 
 }

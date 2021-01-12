@@ -11,6 +11,8 @@ import com.studentska.sluzba.model.Smer;
 public interface PredmetService {
 
 	String kreirajIliIzmeni(PredmetDTO request) throws Exception;
+	
+	String izbrisi(int id);
 
 	Predmet findOne(int id);
 

@@ -52,21 +52,29 @@ public class SmerServiceImpl implements SmerService{
 
 
 	@Override
-	public void izbrisi(int idSmer) throws Exception {
-		// TODO Auto-generated method stub
+	public String izbrisi(int idSmer) throws Exception {
+		Optional<Smer> smerOptional = smerRepository.findById(idSmer);
+		
+		Smer smer = smerOptional.get();
+		
+		smer.setObrisan(true);
+		
+		smerRepository.save(smer);
+		
+		return "Uspesno";
 		
 	}
 
 
 	@Override
 	public Smer findOne(int id) {
-		return smerRepository.findByidSmer(id);
+		return smerRepository.findById(id).get();
 	}
 
 
 	@Override
 	public List<Smer> findAll() {
-		return smerRepository.findAll();
+		return smerRepository.findByObrisanIsFalse();
 	}
 
 }

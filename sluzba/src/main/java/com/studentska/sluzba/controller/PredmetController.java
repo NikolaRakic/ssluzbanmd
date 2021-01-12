@@ -43,6 +43,15 @@ public class PredmetController {
 	
 	}
 	
+	@PostMapping("/obrisi/{id}")
+	public ResponseEntity<String> obrisi(@PathVariable int id){
+		try {
+			return new ResponseEntity<String>(predmetService.izbrisi(id),HttpStatus.OK);
+		}catch (Exception ex) {
+			return new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	
 	
 	@GetMapping("/getPredmet/{id}")
@@ -55,13 +64,15 @@ public class PredmetController {
 	}
 	
 	
-	@GetMapping()
-	public ResponseEntity<List<PredmetDTO>> getSmerovi(){
+	@GetMapping("/getPredmeti")
+	public ResponseEntity<List<PredmetDTO>> getPredmeti(){
+		System.out.println("USAAO");
 		List<Predmet> predmeti = predmetService.findAll();
 		//convert predmeti to DTOs
 		List<PredmetDTO> predmetiDTO = new ArrayList<>();
 		for (Predmet s : predmeti) {
 			predmetiDTO.add(new PredmetDTO(s));
+			System.out.println(s);
 		}
 		return new ResponseEntity<>(predmetiDTO, HttpStatus.OK);
 	}

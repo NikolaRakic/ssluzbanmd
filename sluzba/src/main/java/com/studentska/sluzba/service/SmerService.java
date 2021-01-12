@@ -10,7 +10,7 @@ public interface SmerService {
 	
 	String kreirajIliIzmeni(SmerDTO request) throws Exception;
 
-	void izbrisi(int idSmer) throws Exception;
+	String izbrisi(int idSmer) throws Exception;
 
 	Smer findOne(int id);
 
