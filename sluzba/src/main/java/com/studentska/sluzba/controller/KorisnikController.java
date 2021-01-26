@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,7 +69,7 @@ public class KorisnikController {
 	}
 	
 	
-	@DeleteMapping("/obrisi/{id}")
+	@PutMapping("/obrisi/{id}")
 	public ResponseEntity<String> obrisi (@PathVariable int id){
 		try {
 			
@@ -131,5 +132,7 @@ public class KorisnikController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+
 
 }

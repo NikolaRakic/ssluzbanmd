@@ -96,7 +96,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 				student = korisnik.getStudent();
 			}
 			Smer smer = smerRepository.findByNaziv(request.getSmerStudenta());
-			System.out.println("AAAAAAAAAAA" + smer);
+			
 			if (smer == null) {
 				throw new Exception("Nepostojeci smer");
 			}
@@ -127,7 +127,6 @@ public class KorisnikServiceImpl implements KorisnikService {
 		korisnik.setPass(configuration.passwordEncoder().encode(request.getPass()));
 		korisnik.setPrezime(request.getPrezime());
 		String datumStr = request.getRodjendan();
-		// "31/12/1998"; <- koristite ovaj format u celoj aplikaciji
 		Date rodjendan = new SimpleDateFormat(Constants.DATE_FORMAT).parse(datumStr.substring(0,10));
 		korisnik.setRodjendan(rodjendan);
 		korisnik.setUsername(request.getUsername());
@@ -146,8 +145,11 @@ public class KorisnikServiceImpl implements KorisnikService {
 		Korisnik kor = k.get();
 		Student student = kor.getStudent();
 		if(!(student == null)) {
-			korisnikRepository.delete(kor);
-			studentRepository.delete(student);
+			kor.setObrisan(true);
+			student.setObrisan(true);
+			korisnikRepository.saveAndFlush(kor);
+			studentRepository.saveAndFlush(student);
+			return "Uspesno";
 		}
 		else {
 			korisnikRepository.delete(kor);

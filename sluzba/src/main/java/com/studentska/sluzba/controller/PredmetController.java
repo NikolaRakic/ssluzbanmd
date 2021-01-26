@@ -66,21 +66,19 @@ public class PredmetController {
 	
 	@GetMapping("/getPredmeti")
 	public ResponseEntity<List<PredmetDTO>> getPredmeti(){
-		System.out.println("USAAO");
 		List<Predmet> predmeti = predmetService.findAll();
 		//convert predmeti to DTOs
 		List<PredmetDTO> predmetiDTO = new ArrayList<>();
 		for (Predmet s : predmeti) {
 			predmetiDTO.add(new PredmetDTO(s));
-			System.out.println(s);
 		}
 		return new ResponseEntity<>(predmetiDTO, HttpStatus.OK);
 	}
 	
-	@GetMapping("/predmetiPoSmeru")
-	public ResponseEntity<?> getPredmetiPoSmeru(@RequestParam("idSmera") int idSmera){
+	@GetMapping("/predmetiPoSmeru/{id}")
+	public ResponseEntity<?> getPredmetiPoSmeru(@PathVariable int id){
 		try {
-			List<PredmetNaSmeruResponseDTO> response = predmetService.getPredmetiPoSmeru(idSmera);
+			List<PredmetNaSmeruResponseDTO> response = predmetService.getPredmetiPoSmeru(id);
 			return new ResponseEntity<List<PredmetNaSmeruResponseDTO>>(response, HttpStatus.OK);
 		}catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

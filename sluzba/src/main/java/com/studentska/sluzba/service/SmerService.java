@@ -15,5 +15,7 @@ public interface SmerService {
 	Smer findOne(int id);
 
 	List<Smer> findAll();
+
+	Smer findOneByNaziv(String naziv);
 	
 }

@@ -36,7 +36,7 @@ public class IspitController {
 //	}
 	
 	//prvi nacin
-	@GetMapping("/polozeniIspitiZaStudentaOptimized")
+	@GetMapping("/polozeniIspitiZaStudenta/{idStudenta}")
 	public ResponseEntity<?> polozeniIspitiZaStudentaOptimized(@RequestParam("idStudenta") int idStudenta){
 		try {
 			List<PolozenIspitResponseDTO> response = ispitService.polozeniIspitiZaStudentaOptimized(idStudenta);

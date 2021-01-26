@@ -77,4 +77,10 @@ public class SmerServiceImpl implements SmerService{
 		return smerRepository.findByObrisanIsFalse();
 	}
 
+
+	@Override
+	public Smer findOneByNaziv(String naziv) {
+		return smerRepository.findByNaziv(naziv);
+	}
+
 }

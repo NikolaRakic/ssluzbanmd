@@ -47,7 +47,6 @@ public class SmerController {
 	
 	@GetMapping("/getSmer/{id}")
 	public ResponseEntity<SmerDTO> getSmer(@PathVariable int id){
-		System.out.println("usao");
 		Smer smer = smerService.findOne(id);
 		if(smer == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,7 +55,18 @@ public class SmerController {
 	}
 	
 	
-	@GetMapping()
+	@GetMapping("/getSmerByNaziv/{naziv}")
+	public ResponseEntity<SmerDTO> getSmerByNaziv(@PathVariable String naziv){
+		Smer smer = smerService.findOneByNaziv(naziv);
+		if(smer == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			
+		}
+		return new ResponseEntity<>(new SmerDTO(smer), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/getSmerovi")
 	@PreAuthorize("hasAuthority('admin')")
 	public ResponseEntity<List<SmerDTO>> getSmerovi(){
 		List<Smer> smerovi = smerService.findAll();
@@ -64,6 +74,7 @@ public class SmerController {
 		List<SmerDTO> smeroviDTO = new ArrayList<>();
 		for (Smer s : smerovi) {
 			smeroviDTO.add(new SmerDTO(s));
+			System.out.println(s.getNaziv());
 		}
 		return new ResponseEntity<>(smeroviDTO, HttpStatus.OK);
 	}
