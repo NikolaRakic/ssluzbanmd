@@ -2,6 +2,9 @@ package com.studentska.sluzba.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -24,6 +27,7 @@ public class TipIspita implements Serializable {
 	private String nazivTipa;
 
 	//bi-directional many-to-one association to Ispit
+	@JsonIgnore
 	@OneToMany(mappedBy="tipIspita")
 	private List<Ispit> ispits;
 

@@ -10,4 +10,6 @@ public interface TipIspitaRepository extends JpaRepository<TipIspita, Integer>{
 	
 	TipIspita findByIdTipIspita(int id);
 
+	//TipIspita findOne(int id);
+
 }

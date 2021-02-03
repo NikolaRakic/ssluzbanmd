@@ -3,10 +3,11 @@ package com.studentska.sluzba.dto.response;
 public class ProfesoriDTO {
 	
 	private int idKorisnik;
-	private int idNastavnik;
+	private String Adresa;
+	private String email;
 	private String ime;
 	private String prezime;
-	private String email;
+	private int idNastavnik;
 	private String uloga;
 	
 	public ProfesoriDTO(int idKorisnik, int idNastavnik, String ime, String prezime, String email, String uloga) {

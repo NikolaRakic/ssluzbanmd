@@ -34,7 +34,6 @@ public class SmerController {
 	
 	@PostMapping("/kreirajIliIzmeni")
 	public ResponseEntity<String> kreirajIliIzmeni (@RequestBody SmerDTO request){
-		
 		try {
 			return new ResponseEntity<String>(smerService.kreirajIliIzmeni(request),HttpStatus.OK);
 		} catch (Exception e) {
@@ -63,6 +62,21 @@ public class SmerController {
 			
 		}
 		return new ResponseEntity<>(new SmerDTO(smer), HttpStatus.OK);
+	}
+	
+	@GetMapping("/getSmeroviByPredmet/{id}")
+	public ResponseEntity<List<SmerDTO>> getSmerByPredmet(@PathVariable int id){
+		List<Smer> smerovi = smerService.findAllByPredmet(id);
+		List<SmerDTO> smeroviDTO = new ArrayList<SmerDTO>();
+		if(smerovi == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			
+		}else {
+			for (Smer smer : smerovi) {
+				smeroviDTO.add(new SmerDTO(smer));
+			}
+		}
+		return new ResponseEntity<List<SmerDTO>>(smeroviDTO, HttpStatus.OK);
 	}
 	
 	

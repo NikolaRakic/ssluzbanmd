@@ -1,5 +1,6 @@
 package com.studentska.sluzba.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.studentska.sluzba.dto.request.SmerDTO;
 import com.studentska.sluzba.model.Korisnik;
+import com.studentska.sluzba.model.PredmetNaSmeru;
 import com.studentska.sluzba.model.Smer;
+import com.studentska.sluzba.repository.PredmetNaSmeruRepository;
 import com.studentska.sluzba.repository.SmerRepository;
 import com.studentska.sluzba.service.SmerService;
 
@@ -20,6 +23,9 @@ public class SmerServiceImpl implements SmerService{
 	
 	@Autowired
 	SmerRepository smerRepository;
+	
+	@Autowired
+	PredmetNaSmeruRepository predmetNaSmeruRepository;
 	
 	
 	@Transactional // omogucuje rollback u bazi pri pucanju
@@ -81,6 +87,18 @@ public class SmerServiceImpl implements SmerService{
 	@Override
 	public Smer findOneByNaziv(String naziv) {
 		return smerRepository.findByNaziv(naziv);
+	}
+
+
+	@Override
+	public List<Smer> findAllByPredmet(int id) {
+		List<PredmetNaSmeru> predmetNaSmeru = predmetNaSmeruRepository.findAllByPredmetIdPredmetAndObrisanFalse(id);
+		List<Smer> smerovi = new ArrayList<Smer>();
+		for (PredmetNaSmeru pns : predmetNaSmeru) {
+			Smer smer = smerRepository.findByidSmer(pns.getSmer().getIdSmer());
+			smerovi.add(smer);
+		}
+		return smerovi;
 	}
 
 }

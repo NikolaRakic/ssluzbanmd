@@ -28,6 +28,7 @@ PRIMARY KEY(id_smer));
 CREATE TABLE rok (
   id_rok INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   naziv_roka VARCHAR(255)  NULL    ,
+  aktivan BOOLEAN DEFAULT FALSE,
 PRIMARY KEY(id_rok));
 
 

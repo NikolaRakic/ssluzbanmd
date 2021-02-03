@@ -12,9 +12,15 @@ import org.springframework.stereotype.Service;
 import com.studentska.sluzba.dto.request.DodeliPredmetSmeruRequestDTO;
 import com.studentska.sluzba.dto.request.PredmetDTO;
 import com.studentska.sluzba.dto.response.PredmetNaSmeruResponseDTO;
+import com.studentska.sluzba.model.Korisnik;
+import com.studentska.sluzba.model.Nastavnik;
+import com.studentska.sluzba.model.NastavnikPredaje;
 import com.studentska.sluzba.model.Predmet;
 import com.studentska.sluzba.model.PredmetNaSmeru;
 import com.studentska.sluzba.model.Smer;
+import com.studentska.sluzba.repository.KorisnikRepository;
+import com.studentska.sluzba.repository.NastavnikPredajeRepository;
+import com.studentska.sluzba.repository.NastavnikRepository;
 import com.studentska.sluzba.repository.PredmetNaSmeruRepository;
 import com.studentska.sluzba.repository.PredmetRepository;
 import com.studentska.sluzba.repository.SmerRepository;
@@ -32,6 +38,15 @@ public class PredmetServiceImpl implements PredmetService{
 	@Autowired
 	SmerRepository smerRepository;
 	
+	@Autowired
+	NastavnikPredajeRepository nastavnikPredajeRepository;
+	
+	@Autowired
+	NastavnikRepository nastavnikRepository;
+	
+	@Autowired
+	KorisnikRepository korisnikRepository;
+	
 	@Transactional
 	@Override
 	public String kreirajIliIzmeni(PredmetDTO request) throws Exception {
@@ -39,13 +54,13 @@ public class PredmetServiceImpl implements PredmetService{
 		Predmet predmet = new Predmet ();
 	
 		if(request.getIdPredmet() > 0) {//izmena
-			Optional<Predmet> smerZaUpdate = predmetRepository.findById(request.getIdPredmet());
-			if (!smerZaUpdate.isPresent()) {
+			Optional<Predmet> predmetZaUpdate = predmetRepository.findById(request.getIdPredmet());
+			if (!predmetZaUpdate.isPresent()) {
 				throw new Exception("Predmet ne postoji");
 			}
 			else {
 				
-				predmet = smerZaUpdate.get();
+				predmet = predmetZaUpdate.get();
 				predmet.setNaziv(request.getNaziv());
 			}
 		}
@@ -67,7 +82,7 @@ public class PredmetServiceImpl implements PredmetService{
 
 	@Override
 	public List<Predmet> findAll() {
-		return predmetRepository.findAll();
+		return predmetRepository.findByObrisanIsFalse();
 	}
 
 	@Override
@@ -78,7 +93,7 @@ public class PredmetServiceImpl implements PredmetService{
 			throw new Exception("Prosledjen je pogresan id smera");
 		}
 		Smer smer = smerOptional.get();
-		List<PredmetNaSmeru> predmetiNaSmerovima = predmetNaSmeruRepository.findAllBySmer(smer);
+		List<PredmetNaSmeru> predmetiNaSmerovima = predmetNaSmeruRepository.findAllBySmerAndObrisan(smer, false);
 		List<PredmetNaSmeruResponseDTO> response = new ArrayList<PredmetNaSmeruResponseDTO>();
 		for(PredmetNaSmeru pns:predmetiNaSmerovima) {
 			PredmetNaSmeruResponseDTO tmpObj = new PredmetNaSmeruResponseDTO(pns.getIdPredmetNaSmeru(), pns.getGodinaPojavljivanja(), pns.isObrisan(), pns.getPredmet().getIdPredmet(), pns.getPredmet().getNaziv(), pns.getPredmet().isObrisan(), pns.getSmer().getIdSmer(), pns.getSmer().getNaziv(), pns.getSmer().getTrajanje(), pns.getSmer().isObrisan());
@@ -130,7 +145,74 @@ public class PredmetServiceImpl implements PredmetService{
 		
 		predmetRepository.saveAndFlush(predmet);
 		
-		return null;
+		return "uspesno";
+	}
+
+
+
+	@Override
+	public String izmeniPredmetNaSmeru(List<PredmetNaSmeruResponseDTO> request) throws Exception {
+		PredmetNaSmeru predmetNaSmeru = new PredmetNaSmeru();
+		for (PredmetNaSmeruResponseDTO predm : request) {
+			Optional<PredmetNaSmeru> predmetZaUpdate = predmetNaSmeruRepository.findById(predm.getIdPredmetNaSmeru());
+			if (!predmetZaUpdate.isPresent()) {
+				throw new Exception("Predmet ne postoji");
+			}
+			else {
+				
+				predmetNaSmeru = predmetZaUpdate.get();
+				predmetNaSmeru.setGodinaPojavljivanja(predm.getGodinaPojavljivanjaPredmetaNaSmeru());
+				
+				predmetNaSmeruRepository.saveAndFlush(predmetNaSmeru);
+				
+			}
+		}
+		return "uspesno";
+		
+		
+		
+	}
+
+
+
+	@Override
+	public String izbrisiPredmetNaSmeru(int idPredmet, int idSmer) throws Exception {
+		PredmetNaSmeru predmetNaSmeru = new PredmetNaSmeru();
+			Optional<PredmetNaSmeru> predmetZaUpdate = predmetNaSmeruRepository.findByPredmetIdPredmetAndSmerIdSmer(idPredmet, idSmer);
+			if (!predmetZaUpdate.isPresent()) {
+				throw new Exception("Predmet ne postoji");
+			}
+			else {
+				
+				predmetNaSmeru = predmetZaUpdate.get();
+				predmetNaSmeru.setObrisan(true);
+				
+				predmetNaSmeruRepository.saveAndFlush(predmetNaSmeru);
+				
+			}
+		
+		return "uspesno";
+	}
+
+
+
+	@Override
+	public List<Predmet> findAllForNastavnik(int id) {
+		
+		Optional<Korisnik> korisnikOptional = korisnikRepository.findById(id);
+		Korisnik korisnik = new Korisnik();
+		if(korisnikOptional.isPresent()) {
+			korisnik = korisnikOptional.get();
+
+		}
+		List<NastavnikPredaje> nastavnikPredaje = nastavnikPredajeRepository.findAllByNastavnikIdNastavnikAndObrisanFalse(korisnik.getNastavnik().getIdNastavnik());
+		List<Predmet> predmeti = new ArrayList<Predmet>();
+		for (NastavnikPredaje nastavnikP : nastavnikPredaje) {
+			Predmet predmet = predmetRepository.findByIdPredmet(nastavnikP.getPredmet().getIdPredmet());
+			predmeti.add(predmet);
+		}
+		return predmeti;
+		
 	}
 	
 	

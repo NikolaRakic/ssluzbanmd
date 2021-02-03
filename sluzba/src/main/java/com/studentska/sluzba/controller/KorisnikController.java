@@ -29,16 +29,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.studentska.sluzba.dto.request.KorisnikDTO;
 import com.studentska.sluzba.dto.request.LoginDTO;
+import com.studentska.sluzba.dto.request.NastavnikPredajeDTO;
 import com.studentska.sluzba.dto.request.PredmetDTO;
+import com.studentska.sluzba.dto.request.ProfesorDTO;
 import com.studentska.sluzba.dto.request.SimpleMessageResponseDTO;
 import com.studentska.sluzba.dto.request.StudentDTO;
 import com.studentska.sluzba.dto.response.LoggedInUserDTO;
 import com.studentska.sluzba.dto.response.ProfesoriDTO;
 import com.studentska.sluzba.dto.response.StudentiDTO;
+import com.studentska.sluzba.dto.response.UlogaNastavnikDTO;
 import com.studentska.sluzba.model.Korisnik;
+import com.studentska.sluzba.model.NastavnikPredaje;
 import com.studentska.sluzba.model.Student;
+import com.studentska.sluzba.model.UlogaNastavnik;
 import com.studentska.sluzba.security.TokenUtils;
 import com.studentska.sluzba.service.KorisnikService;
+import com.studentska.sluzba.service.NastavnikPredajeService;
+import com.studentska.sluzba.service.UlogaNastavnikService;
 
 @RestController
 @RequestMapping("/korisnik")
@@ -56,6 +63,12 @@ public class KorisnikController {
 	
 	@Autowired
 	TokenUtils tokenUtils;
+	
+	@Autowired
+	UlogaNastavnikService ulogaNastavnikService;
+	
+	@Autowired
+	NastavnikPredajeService nastavnikPredajeService;
 	
 	@PostMapping("/kreirajIliIzmeni")
 	public ResponseEntity<SimpleMessageResponseDTO> kreirajIliIzmeni (@RequestBody KorisnikDTO request){
@@ -113,6 +126,17 @@ public class KorisnikController {
 		}
 	}
 	
+	@GetMapping("/getStudentiZaSmer/{id}")
+	public ResponseEntity<?> getStudentiZaSmer(@PathVariable int id){
+		try {
+			List<StudentiDTO> response = korisnikService.sviStudentiZaSmer(id);
+			
+			return new ResponseEntity<List<StudentiDTO>>(response , HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@GetMapping("/getStudent/{id}")
 	public ResponseEntity<StudentDTO> getStudent(@PathVariable int id) throws Exception{
 		StudentDTO studentDTO = korisnikService.findOneStudent(id);
@@ -133,6 +157,66 @@ public class KorisnikController {
 		}
 	}
 	
+	@GetMapping("/getNastavnik/{id}")
+	public ResponseEntity<ProfesorDTO> getNastavnik(@PathVariable int id) throws Exception{
+		ProfesorDTO profesorDTO = korisnikService.findOneNastavnik(id);
+		if(profesorDTO == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<ProfesorDTO>(profesorDTO, HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/getUlogeNastavnik")
+	public ResponseEntity<?> getUlogaNastavnik() throws Exception{
+		try {
+			List<UlogaNastavnikDTO> ulogeDTO = ulogaNastavnikService.findAll();
 
+			return new ResponseEntity<List<UlogaNastavnikDTO>>(ulogeDTO, HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	@GetMapping("/getNastavniciZaPredmet/{id}")
+	public ResponseEntity<List<ProfesoriDTO>> getNastavniciZaPredmet(@PathVariable int id) throws Exception{
+		List<ProfesoriDTO> profesoriDTO = korisnikService.findAllByPredmetId(id);
+		
+		return new ResponseEntity<List<ProfesoriDTO>>(profesoriDTO, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/getNastavniciZaDodavanjeNaPredmet/{id}")
+	public ResponseEntity<List<ProfesoriDTO>> getNastavniciZaDodavanjeNaPredmet(@PathVariable int id) throws Exception{
+		List<ProfesoriDTO> profesoriDTO = korisnikService.findAllByPredmetIdNot(id);
+		
+		return new ResponseEntity<List<ProfesoriDTO>>(profesoriDTO, HttpStatus.OK);
+	}
+	
+	@PostMapping("/addNastavnikNaPredmet")
+	public ResponseEntity<SimpleMessageResponseDTO> addNastavnikNaPredmet(@RequestBody NastavnikPredajeDTO request){
+		try {
+			System.out.println(request.getIdNastavnik());
+			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(nastavnikPredajeService.addNastavnikPredaje(request)),HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(e.getMessage()),HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/obrisiNastavnikNaPredmetu")
+	public ResponseEntity<SimpleMessageResponseDTO> obrisiNastavnikNaPredmetu(@RequestBody NastavnikPredajeDTO request){
+		try {
+			System.out.println(request.getIdNastavnik() + " " + request.getIdPredmet());
+			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(nastavnikPredajeService.obrisiNastavnikPredaje(request)),HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(e.getMessage()),HttpStatus.BAD_REQUEST);
+		}
+		
+	}
 
 }

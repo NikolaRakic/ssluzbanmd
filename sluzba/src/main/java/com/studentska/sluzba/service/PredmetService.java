@@ -21,4 +21,10 @@ public interface PredmetService {
 	List<PredmetNaSmeruResponseDTO> getPredmetiPoSmeru(int idSmera) throws Exception;
 
 	String dodeliPredmetSmeru(DodeliPredmetSmeruRequestDTO request) throws Exception;
+
+	String izmeniPredmetNaSmeru(List<PredmetNaSmeruResponseDTO> request) throws Exception;
+	
+	String izbrisiPredmetNaSmeru(int idPredmet, int idSmer) throws Exception;
+
+	List<Predmet> findAllForNastavnik(int id);
 }

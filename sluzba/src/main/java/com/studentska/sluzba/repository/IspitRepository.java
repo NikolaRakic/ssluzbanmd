@@ -16,6 +16,12 @@ import com.studentska.sluzba.model.TipIspita;
 public interface IspitRepository extends JpaRepository<Ispit, Integer>{
 	//prvi nacin
 	List<Ispit> findAllByObrisanAndTipIspitaAndStudentAndOcenaGreaterThan(boolean obrisan, TipIspita tipIspita, Student student, int ocena);
+
+	List<Ispit> findAllByObrisanFalse();
+
+	List<Ispit> findAllByStudentIdStudentAndObrisanFalse(int idStudent);
+
+	List<Ispit> findAllByPredmetIdPredmetAndObrisanFalse(int idPredmet);
 	
 //	//drugi nacin
 //	@Query(value = "select p.naziv, i.ocena, r.naziv_roka from ispit as i \r\n" + 

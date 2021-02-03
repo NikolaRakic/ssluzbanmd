@@ -2,6 +2,10 @@ package com.studentska.sluzba.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.List;
 
 
@@ -21,8 +25,20 @@ public class Rok implements Serializable {
 
 	@Column(name="naziv_roka")
 	private String nazivRoka;
+	
+	@Column(name="aktivan")
+	private boolean aktivan;
+
+	public boolean isAktivan() {
+		return aktivan;
+	}
+
+	public void setAktivan(boolean aktivan) {
+		this.aktivan = aktivan;
+	}
 
 	//bi-directional many-to-one association to Ispit
+	@JsonIgnore
 	@OneToMany(mappedBy="rok")
 	private List<Ispit> ispits;
 

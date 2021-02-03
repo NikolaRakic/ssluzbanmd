@@ -3,25 +3,30 @@ package com.studentska.sluzba.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.NamedParameterJdbcOperationsDependsOnPostProcessor;
 import org.springframework.stereotype.Service;
 
 import com.studentska.sluzba.dto.request.KorisnikDTO;
+import com.studentska.sluzba.dto.request.ProfesorDTO;
 import com.studentska.sluzba.dto.request.StudentDTO;
 import com.studentska.sluzba.dto.response.ProfesoriDTO;
 import com.studentska.sluzba.dto.response.StudentiDTO;
 import com.studentska.sluzba.model.Korisnik;
 import com.studentska.sluzba.model.Nastavnik;
+import com.studentska.sluzba.model.NastavnikPredaje;
 import com.studentska.sluzba.model.Smer;
 import com.studentska.sluzba.model.Student;
 import com.studentska.sluzba.model.Uloga;
 import com.studentska.sluzba.model.UlogaNastavnik;
 import com.studentska.sluzba.repository.KorisnikRepository;
+import com.studentska.sluzba.repository.NastavnikPredajeRepository;
 import com.studentska.sluzba.repository.NastavnikRepository;
 import com.studentska.sluzba.repository.SmerRepository;
 import com.studentska.sluzba.repository.StudentRepository;
@@ -60,6 +65,9 @@ public class KorisnikServiceImpl implements KorisnikService {
 
 	@Autowired
 	SmerRepository smerRepository;
+	
+	@Autowired
+	NastavnikPredajeRepository nastavnikPredajeRepository;
 	
 	@Autowired
 	SecurityConfiguration configuration;
@@ -144,6 +152,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 		}
 		Korisnik kor = k.get();
 		Student student = kor.getStudent();
+		Nastavnik nastavnik = kor.getNastavnik();
 		if(!(student == null)) {
 			kor.setObrisan(true);
 			student.setObrisan(true);
@@ -151,8 +160,12 @@ public class KorisnikServiceImpl implements KorisnikService {
 			studentRepository.saveAndFlush(student);
 			return "Uspesno";
 		}
-		else {
-			korisnikRepository.delete(kor);
+		else if(!(nastavnik == null)) {
+			kor.setObrisan(true);
+			nastavnik.setObrisan(true);
+			korisnikRepository.saveAndFlush(kor);
+			nastavnikRepository.saveAndFlush(nastavnik);
+			return "Uspesno";
 		}
 		
 		
@@ -184,7 +197,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 
 	@Override
 	public List<ProfesoriDTO> sviProfesori() throws Exception {
-		List<Korisnik> profesori = korisnikRepository.findByNastavnikNotNull();
+		List<Korisnik> profesori = korisnikRepository.findByNastavnikNotNullAndObrisanFalse();
 		List<ProfesoriDTO> profesoriDTO = new ArrayList<ProfesoriDTO>();
 		for (Korisnik p : profesori) {
 			profesoriDTO.add(new ProfesoriDTO(p.getIdKorisnik(), p.getNastavnik().getIdNastavnik(), p.getIme(), p.getPrezime(), p.getEmail(), p.getNastavnik().getUlogaNastavnik().getNaziv()));
@@ -210,6 +223,84 @@ public class KorisnikServiceImpl implements KorisnikService {
 		StudentDTO studentDTO = new StudentDTO(korisnik.getIdKorisnik(), korisnik.getAdresa(), korisnik.getEmail(), korisnik.getIme(), korisnik.getPass(), korisnik.getPrezime(), korisnik.getRodjendan().toString(), korisnik.getUsername(), korisnik.getUloga().getNaziv(), student.getBrojIndeksa(), student.getGodinaStudija(), student.getSmer().getNaziv());
 		return studentDTO;
 	
+	}
+
+	@Override
+	public ProfesorDTO findOneNastavnik(int id) throws Exception {
+		Optional<Korisnik> korisnikOptional = korisnikRepository.findById(id);
+		
+		if(!korisnikOptional.isPresent()) {
+			throw new Exception("Korisnik sa prosledjenim id-om ne postoji");
+		}
+		Korisnik korisnik = korisnikOptional.get();
+		
+		Optional<Nastavnik> nastavnikOptional = nastavnikRepository.findById(korisnik.getNastavnik().getIdNastavnik());
+		if(!nastavnikOptional.isPresent()) {
+			throw new Exception("Nastavnik sa prosledjenim id-om ne postoji");
+		}
+		System.out.println("kor ime : " + korisnik.getUsername() );
+		Nastavnik nastavnik = nastavnikOptional.get();
+		ProfesorDTO profesorDTO = new ProfesorDTO(korisnik.getIdKorisnik(), korisnik.getUloga().getNaziv(), korisnik.getAdresa(), korisnik.getEmail(), korisnik.getIme(), korisnik.getPass(), korisnik.getPrezime(), korisnik.getRodjendan().toString(), korisnik.getUsername(), nastavnik.getIdNastavnik(), nastavnik.getUlogaNastavnik().getNaziv());
+		return profesorDTO;
+	}
+
+	@Override
+	public List<ProfesoriDTO> findAllByPredmetId(int id) throws Exception {
+		List<Korisnik> profesori = korisnikRepository.findByNastavnikNotNullAndObrisanFalse();
+		List<NastavnikPredaje> nastavnikPredaje = nastavnikPredajeRepository.findByPredmetIdPredmetAndObrisanFalse(id);
+		
+		List<ProfesoriDTO> profesoriDTO = new ArrayList<ProfesoriDTO>();
+		for (Korisnik p : profesori) {
+			for (NastavnikPredaje np : nastavnikPredaje) {
+				if(np.getNastavnik().getIdNastavnik() == p.getNastavnik().getIdNastavnik()) {
+					profesoriDTO.add(new ProfesoriDTO(p.getIdKorisnik(), p.getNastavnik().getIdNastavnik(), p.getIme(), p.getPrezime(), p.getEmail(), p.getNastavnik().getUlogaNastavnik().getNaziv()));				
+				}
+			}
+		
+		}
+		
+		return profesoriDTO;
+	}
+
+	@Override
+	public List<ProfesoriDTO> findAllByPredmetIdNot(int id) throws Exception {
+
+		List<NastavnikPredaje> nastavnikPredaje = nastavnikPredajeRepository.findByPredmetIdPredmetAndObrisanFalse(id);
+
+		List<Korisnik> sviProfesori = korisnikRepository.findByNastavnikNotNullAndObrisanFalse();
+
+		for(Iterator<Korisnik> prof = sviProfesori.iterator(); prof.hasNext();) {
+			Korisnik profesor = prof.next();
+			for (NastavnikPredaje np : nastavnikPredaje) {
+				if( profesor.getNastavnik().getIdNastavnik() == np.getNastavnik().getIdNastavnik()) {				
+						prof.remove();
+				}
+			}			
+		}
+		
+		List<ProfesoriDTO> profesoriDTO = new ArrayList<ProfesoriDTO>();
+		
+		for (Korisnik p : sviProfesori) {
+			profesoriDTO.add(new ProfesoriDTO(p.getIdKorisnik(), p.getNastavnik().getIdNastavnik(), p.getIme(), p.getPrezime(), p.getEmail(), p.getNastavnik().getUlogaNastavnik().getNaziv()));				
+			
+		}
+		
+		return profesoriDTO;
+	}
+
+	@Override
+	public List<StudentiDTO> sviStudentiZaSmer(int id) {
+		List<Korisnik> studenti = korisnikRepository.findByStudentNotNullAndObrisanFalse();
+		List<StudentiDTO> studentiDTO = new ArrayList<StudentiDTO>();
+		
+		for (Korisnik s : studenti) {
+			if(s.getStudent().getSmer().getIdSmer() == id) {
+				studentiDTO.add(new StudentiDTO(s.getIdKorisnik(), s.getUsername(), s.getEmail(), s.getIme(), s.getPrezime(), s.getStudent().getIdStudent(), s.getStudent().getBrojIndeksa(), s.getStudent().getSmer().getNaziv()));
+				
+			}
+			}
+		
+		return studentiDTO;
 	}
 
 }

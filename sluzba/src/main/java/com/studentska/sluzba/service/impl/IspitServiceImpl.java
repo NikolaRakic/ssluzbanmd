@@ -8,13 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studentska.sluzba.dto.request.IspitIliKolokvijumDTO;
+import com.studentska.sluzba.dto.response.IspitiDTO;
 import com.studentska.sluzba.dto.response.PolozenIspitResponseDTO;
 import com.studentska.sluzba.model.Ispit;
+import com.studentska.sluzba.model.Korisnik;
+import com.studentska.sluzba.model.NastavnikPredaje;
 import com.studentska.sluzba.model.Predmet;
 import com.studentska.sluzba.model.Rok;
 import com.studentska.sluzba.model.Student;
 import com.studentska.sluzba.model.TipIspita;
 import com.studentska.sluzba.repository.IspitRepository;
+import com.studentska.sluzba.repository.KorisnikRepository;
+import com.studentska.sluzba.repository.NastavnikPredajeRepository;
 import com.studentska.sluzba.repository.PredmetRepository;
 import com.studentska.sluzba.repository.RokRepository;
 import com.studentska.sluzba.repository.StudentRepository;
@@ -42,6 +47,12 @@ public class IspitServiceImpl implements IspitService {
 	
 	@Autowired
 	RokRepository rokRepository;
+	
+	@Autowired
+	KorisnikRepository korisnikRepository;
+	
+	@Autowired
+	NastavnikPredajeRepository nastavnikPredajeRepository;
 	
 	
 	//Drugi nacin
@@ -94,7 +105,7 @@ public class IspitServiceImpl implements IspitService {
 		Predmet predmet = predmetRepository.findByIdPredmet(request.getIdPredmet());
 		
 		Rok rok = rokRepository.findByIdRok(request.getIdRok());
-		
+
 		Student student = studentRepository.findByIdStudent(request.getIdStudent());
 		
 		TipIspita tipIspita = tipIspitaRepository.findByIdTipIspita(request.getIdTipIspita());
@@ -106,7 +117,7 @@ public class IspitServiceImpl implements IspitService {
 			ispit.setDatum(request.getDatumIspita());
 			ispit.setPredmet(predmet);
 			ispit.setRok(rok);
-			ispit.setOcena(null);
+			ispit.setOcena(0);
 			ispit.setStudent(student);
 			ispit.setTipIspita(tipIspita);
 			
@@ -130,6 +141,42 @@ public class IspitServiceImpl implements IspitService {
 			throw new Exception("Nije dobar Json");
 		}
 		return null;
+	}
+
+	@Override
+	public List<IspitiDTO> getAll() {
+		List<Ispit> ispiti = ispitRepository.findAllByObrisanFalse();
+		
+		List<IspitiDTO> ispitiDTO = new ArrayList<IspitiDTO>();
+		
+		for (Ispit ispit : ispiti) {
+			ispitiDTO.add(new IspitiDTO(ispit.getStudent().getBrojIndeksa(), ispit.getPredmet().getNaziv(), ispit.getRok().getNazivRoka(), ispit.getTipIspita().getNazivTipa(), ispit.getDatum().toString(), ispit.getOcena(), ispit.getBodovi()));
+		}
+		return ispitiDTO;
+	}
+
+	@Override
+	public List<IspitiDTO> getAllByStudentOrNastavnik(int id) {
+		Korisnik ulogovaniKorisnik = korisnikRepository.findByIdKorisnik(id);
+		List<Ispit> ispiti = new ArrayList<Ispit>();
+		List<IspitiDTO> ispitiDTO = new ArrayList<IspitiDTO>(); 
+		
+		if(ulogovaniKorisnik.getStudent() != null) {
+			ispiti = ispitRepository.findAllByStudentIdStudentAndObrisanFalse(ulogovaniKorisnik.getStudent().getIdStudent());
+		}
+		else if(ulogovaniKorisnik.getNastavnik() != null) {
+			List<NastavnikPredaje> nastavnikPredaje = nastavnikPredajeRepository.findAllByNastavnikIdNastavnikAndObrisanFalse(ulogovaniKorisnik.getNastavnik().getIdNastavnik());
+			for (NastavnikPredaje np : nastavnikPredaje) {
+				List<Ispit> ispitiNp = ispitRepository.findAllByPredmetIdPredmetAndObrisanFalse(np.getPredmet().getIdPredmet());
+				ispiti.addAll(ispitiNp);
+			}
+			
+		}
+		for (Ispit ispit : ispiti) {
+			ispitiDTO.add(new IspitiDTO(ispit.getStudent().getBrojIndeksa(), ispit.getPredmet().getNaziv(), ispit.getRok().getNazivRoka(), ispit.getTipIspita().getNazivTipa(), ispit.getDatum().toString(), ispit.getOcena(), ispit.getBodovi()));
+		}
+		return ispitiDTO;
+		
 	}
 
 

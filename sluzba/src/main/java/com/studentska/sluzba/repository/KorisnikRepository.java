@@ -14,7 +14,11 @@ public interface KorisnikRepository extends JpaRepository<Korisnik, Integer> {
 
 	List<Korisnik> findByStudentNotNullAndObrisanFalse();
 
-	List<Korisnik> findByNastavnikNotNull();
+	List<Korisnik> findByNastavnikNotNullAndObrisanFalse();
 
 	Optional<Korisnik> findByStudentIdStudent(int idStudent);
+
+	List<Korisnik> findByNastavnikIdNastavnikNotAndObrisanFalse(int idNastavnik);
+
+	Korisnik findByIdKorisnik(int id);
 }

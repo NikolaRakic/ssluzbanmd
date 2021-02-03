@@ -3,6 +3,8 @@ package com.studentska.sluzba.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,10 +77,41 @@ public class PredmetController {
 		return new ResponseEntity<>(predmetiDTO, HttpStatus.OK);
 	}
 	
+	@GetMapping("/getPredmetiZaNastavnika/{id}")
+	public ResponseEntity<List<PredmetDTO>> getPredmetiZaNastavnika(@PathVariable int id){
+		List<Predmet> predmeti = predmetService.findAllForNastavnik(id);
+		List<PredmetDTO> predmetiDTO = new ArrayList<>();
+		for (Predmet s : predmeti) {
+			predmetiDTO.add(new PredmetDTO(s));
+		}
+		return new ResponseEntity<>(predmetiDTO, HttpStatus.OK);
+	}
+	
+	@PostMapping("/izmeniPredmetNaSmeru")
+	public ResponseEntity<String> izmeniPredmetNaSmeru (@RequestBody List<PredmetNaSmeruResponseDTO> request){
+		
+		try {
+			return new ResponseEntity<String>(predmetService.izmeniPredmetNaSmeru(request),HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/obrisiPredmetZaSmer/{idPredmet}/{idSmer}")
+	public ResponseEntity<String> obrisiPredmetZaSmer(@PathVariable int idPredmet, @PathVariable int idSmer){
+		try {
+			return new ResponseEntity<String>(predmetService.izbrisiPredmetNaSmeru(idPredmet, idSmer),HttpStatus.OK);
+		}catch (Exception ex) {
+			return new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@GetMapping("/predmetiPoSmeru/{id}")
 	public ResponseEntity<?> getPredmetiPoSmeru(@PathVariable int id){
 		try {
 			List<PredmetNaSmeruResponseDTO> response = predmetService.getPredmetiPoSmeru(id);
+			
 			return new ResponseEntity<List<PredmetNaSmeruResponseDTO>>(response, HttpStatus.OK);
 		}catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
