@@ -75,7 +75,9 @@ public class IspitServiceImpl implements IspitService {
 	//prvi nacin
 	@Override
 	public List<PolozenIspitResponseDTO> polozeniIspitiZaStudentaOptimized(int idStudenta) throws Exception {
-		Optional<Student> studentOptional = studentRepository.findById(idStudenta);
+		Optional<Korisnik> korisnikOptional = korisnikRepository.findById(idStudenta);
+		Korisnik korisnik = korisnikOptional.get();
+		Optional<Student> studentOptional = studentRepository.findById(korisnik.getStudent().getIdStudent());
 		if(!studentOptional.isPresent()) {
 			throw new Exception("Student sa prosledjenim id-om ne postoji");
 		}

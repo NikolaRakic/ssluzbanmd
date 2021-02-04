@@ -178,7 +178,7 @@ public class PredmetServiceImpl implements PredmetService{
 	@Override
 	public String izbrisiPredmetNaSmeru(int idPredmet, int idSmer) throws Exception {
 		PredmetNaSmeru predmetNaSmeru = new PredmetNaSmeru();
-			Optional<PredmetNaSmeru> predmetZaUpdate = predmetNaSmeruRepository.findByPredmetIdPredmetAndSmerIdSmer(idPredmet, idSmer);
+			Optional<PredmetNaSmeru> predmetZaUpdate = predmetNaSmeruRepository.findByPredmetIdPredmetAndSmerIdSmerAndObrisan(idPredmet, idSmer, false);
 			if (!predmetZaUpdate.isPresent()) {
 				throw new Exception("Predmet ne postoji");
 			}

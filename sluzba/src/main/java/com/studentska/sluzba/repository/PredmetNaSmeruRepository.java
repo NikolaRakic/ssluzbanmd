@@ -17,7 +17,7 @@ public interface PredmetNaSmeruRepository extends JpaRepository<PredmetNaSmeru, 
 	
 	PredmetNaSmeru findBySmerAndPredmetAndGodinaPojavljivanjaAndObrisan(Smer smer, Predmet predmet, int godinaPojavljivanja, boolean obrisan);
 	
-	Optional<PredmetNaSmeru> findByPredmetIdPredmetAndSmerIdSmer(int idPredmet, int idSmer);
+	Optional<PredmetNaSmeru> findByPredmetIdPredmetAndSmerIdSmerAndObrisan(int idPredmet, int idSmer, boolean obrisan);
 
 	List<PredmetNaSmeru> findAllByPredmetIdPredmetAndObrisanFalse(int id);
 }

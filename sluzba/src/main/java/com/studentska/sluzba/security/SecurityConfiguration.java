@@ -78,6 +78,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and().authorizeRequests()
 				.antMatchers("/korisnik/login").permitAll()
 				.antMatchers("/korisnik/kreirajIliIzmeni").permitAll()
+				.antMatchers("/smer/getSmerovi").permitAll()
 				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.anyRequest().authenticated();
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

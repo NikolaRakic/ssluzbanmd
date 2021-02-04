@@ -85,23 +85,25 @@ public class KorisnikServiceImpl implements KorisnikService {
 			throw new Exception("Bad request");
 		}
 
-		if (request.getIdKorisnik() > 0) {
+		if (request.getIdKorisnik() > 0) { //izmena
 			Optional<Korisnik> korisnikZaUpdate = korisnikRepository.findById(request.getIdKorisnik());
 			if (!korisnikZaUpdate.isPresent()) {
 				throw new Exception("Korisnik ne postojit");
 			}
 			korisnik = korisnikZaUpdate.get();
-		} else {
+		} else { //dodavanje
 			Uloga uloga = ulogaRepository.findByNaziv(request.getUloga());
 			korisnik.setUloga(uloga);
+			korisnik.setPass(configuration.passwordEncoder().encode(request.getPass()));
 
 		}
 		Nastavnik nastavnik = new Nastavnik();
 		Student student = new Student();
 		if (prosledjenaUloga.equals(ULOGA_STUDENT)) {
-
+			System.out.println("student");
 			if (korisnik.getStudent() != null) {
 				student = korisnik.getStudent();
+				
 			}
 			Smer smer = smerRepository.findByNaziv(request.getSmerStudenta());
 			
@@ -132,7 +134,7 @@ public class KorisnikServiceImpl implements KorisnikService {
 		korisnik.setAdresa(request.getAdresa());
 		korisnik.setEmail(request.getEmail());
 		korisnik.setIme(request.getIme());
-		korisnik.setPass(configuration.passwordEncoder().encode(request.getPass()));
+		//korisnik.setPass(configuration.passwordEncoder().encode(request.getPass()));
 		korisnik.setPrezime(request.getPrezime());
 		String datumStr = request.getRodjendan();
 		Date rodjendan = new SimpleDateFormat(Constants.DATE_FORMAT).parse(datumStr.substring(0,10));

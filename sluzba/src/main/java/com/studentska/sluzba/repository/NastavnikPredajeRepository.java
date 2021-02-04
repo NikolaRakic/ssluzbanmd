@@ -14,7 +14,7 @@ public interface NastavnikPredajeRepository extends JpaRepository<NastavnikPreda
 	
 	List<NastavnikPredaje> findByPredmetIdPredmetAndObrisanFalse(int id);
 
-	NastavnikPredaje findByPredmetIdPredmetAndNastavnikIdNastavnik(int idPredmet, int idNastavnik);
+	NastavnikPredaje findByPredmetIdPredmetAndNastavnikIdNastavnikAndObrisan(int idPredmet, int idNastavnik, boolean obrisan);
 
 	List<NastavnikPredaje> findByPredmetIdPredmetNotAndObrisanFalse(int id);
 

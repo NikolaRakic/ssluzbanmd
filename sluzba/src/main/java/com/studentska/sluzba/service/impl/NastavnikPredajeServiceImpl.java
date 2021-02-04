@@ -27,7 +27,7 @@ public class NastavnikPredajeServiceImpl implements NastavnikPredajeService{
 	@Override
 	public String addNastavnikPredaje(NastavnikPredajeDTO request) throws Exception {
 		NastavnikPredaje noviNastavnikNaPredmetu = new NastavnikPredaje();
-		Nastavnik nastavnik = nastavnikRepository.getOne(request.getIdNastavnik()); // mozda treba id korisnika
+		Nastavnik nastavnik = nastavnikRepository.getOne(request.getIdNastavnik()); 
 		noviNastavnikNaPredmetu.setNastavnik(nastavnik);
 		Predmet predmet = predmetRepository.findByIdPredmet(request.getIdPredmet());
 		noviNastavnikNaPredmetu.setPredmet(predmet);
@@ -43,7 +43,7 @@ public class NastavnikPredajeServiceImpl implements NastavnikPredajeService{
 
 	@Override
 	public String obrisiNastavnikPredaje(NastavnikPredajeDTO request) throws Exception {
-		NastavnikPredaje np = nastavnikPredajeRepository.findByPredmetIdPredmetAndNastavnikIdNastavnik(request.getIdPredmet(), request.getIdNastavnik());
+		NastavnikPredaje np = nastavnikPredajeRepository.findByPredmetIdPredmetAndNastavnikIdNastavnikAndObrisan(request.getIdPredmet(), request.getIdNastavnik(), false);
 		np.setObrisan(true);
 		nastavnikPredajeRepository.saveAndFlush(np);
 		return "uspesno";

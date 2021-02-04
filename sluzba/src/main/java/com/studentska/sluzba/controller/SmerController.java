@@ -81,7 +81,7 @@ public class SmerController {
 	
 	
 	@GetMapping("/getSmerovi")
-	@PreAuthorize("hasAuthority('admin')")
+	
 	public ResponseEntity<List<SmerDTO>> getSmerovi(){
 		List<Smer> smerovi = smerService.findAll();
 		//convert smerovi to DTOs
@@ -94,6 +94,7 @@ public class SmerController {
 	}
 	
 	@PutMapping("/obrisi/{id}")
+	@PreAuthorize("hasAuthority('admin')")
 	public ResponseEntity<String> obrisi(@PathVariable int id){
 		try {
 			return new ResponseEntity<String>(smerService.izbrisi(id),HttpStatus.OK);

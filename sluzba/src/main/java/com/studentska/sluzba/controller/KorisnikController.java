@@ -197,7 +197,6 @@ public class KorisnikController {
 	@PostMapping("/addNastavnikNaPredmet")
 	public ResponseEntity<SimpleMessageResponseDTO> addNastavnikNaPredmet(@RequestBody NastavnikPredajeDTO request){
 		try {
-			System.out.println(request.getIdNastavnik());
 			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(nastavnikPredajeService.addNastavnikPredaje(request)),HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -209,7 +208,6 @@ public class KorisnikController {
 	@PutMapping("/obrisiNastavnikNaPredmetu")
 	public ResponseEntity<SimpleMessageResponseDTO> obrisiNastavnikNaPredmetu(@RequestBody NastavnikPredajeDTO request){
 		try {
-			System.out.println(request.getIdNastavnik() + " " + request.getIdPredmet());
 			return new ResponseEntity<SimpleMessageResponseDTO>(new SimpleMessageResponseDTO(nastavnikPredajeService.obrisiNastavnikPredaje(request)),HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
